@@ -14,16 +14,165 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      papers: {
+        Row: {
+          course: string
+          download_count: number
+          exam_year: number
+          file_path: string
+          file_type: string
+          file_url: string
+          id: string
+          semester: string
+          status: string
+          subject: string
+          title: string
+          upload_date: string
+          uploaded_by: string
+        }
+        Insert: {
+          course: string
+          download_count?: number
+          exam_year: number
+          file_path: string
+          file_type: string
+          file_url: string
+          id?: string
+          semester: string
+          status?: string
+          subject: string
+          title: string
+          upload_date?: string
+          uploaded_by: string
+        }
+        Update: {
+          course?: string
+          download_count?: number
+          exam_year?: number
+          file_path?: string
+          file_type?: string
+          file_url?: string
+          id?: string
+          semester?: string
+          status?: string
+          subject?: string
+          title?: string
+          upload_date?: string
+          uploaded_by?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "papers_uploaded_by_fkey"
+            columns: ["uploaded_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      profiles: {
+        Row: {
+          course: string | null
+          created_at: string
+          email: string
+          full_name: string | null
+          id: string
+          year_of_study: string | null
+        }
+        Insert: {
+          course?: string | null
+          created_at?: string
+          email: string
+          full_name?: string | null
+          id: string
+          year_of_study?: string | null
+        }
+        Update: {
+          course?: string | null
+          created_at?: string
+          email?: string
+          full_name?: string | null
+          id?: string
+          year_of_study?: string | null
+        }
+        Relationships: []
+      }
+      reports: {
+        Row: {
+          created_at: string
+          id: string
+          paper_id: string
+          reason: string
+          reported_by: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          paper_id: string
+          reason: string
+          reported_by?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          paper_id?: string
+          reason?: string
+          reported_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reports_paper_id_fkey"
+            columns: ["paper_id"]
+            isOneToOne: false
+            referencedRelation: "papers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "reports_reported_by_fkey"
+            columns: ["reported_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
+      increment_download_count: { Args: { _paper_id: string }; Returns: number }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "admin" | "moderator" | "user"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -150,6 +299,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["admin", "moderator", "user"],
+    },
   },
 } as const
