@@ -1,0 +1,4 @@
+CREATE POLICY "Anyone can read paper files" ON storage.objects FOR SELECT USING (bucket_id = 'papers');
+CREATE POLICY "Users can upload paper files to own folder" ON storage.objects FOR INSERT TO authenticated WITH CHECK (bucket_id = 'papers' AND auth.uid()::text = (storage.foldername(name))[1]);
+CREATE POLICY "Users can update own paper files" ON storage.objects FOR UPDATE TO authenticated USING (bucket_id = 'papers' AND auth.uid()::text = (storage.foldername(name))[1]);
+CREATE POLICY "Users can delete own paper files" ON storage.objects FOR DELETE TO authenticated USING (bucket_id = 'papers' AND auth.uid()::text = (storage.foldername(name))[1]);
