@@ -17,11 +17,11 @@ import {
 } from "@/components/ui/select";
 
 type BrowseSearch = {
-  q?: string;
-  course?: string;
-  subject?: string;
-  semester?: string;
-  year?: number;
+  q?: string | undefined;
+  course?: string | undefined;
+  subject?: string | undefined;
+  semester?: string | undefined;
+  year?: number | undefined;
 };
 
 const ALL = "__all__";
@@ -53,11 +53,11 @@ const description =
 
 export const Route = createFileRoute("/browse")({
   validateSearch: (search: Record<string, unknown>): BrowseSearch => ({
-    q: typeof search.q === "string" && search.q ? search.q : undefined,
-    course: typeof search.course === "string" && search.course ? search.course : undefined,
-    subject: typeof search.subject === "string" && search.subject ? search.subject : undefined,
-    semester: typeof search.semester === "string" && search.semester ? search.semester : undefined,
-    year: search.year ? Number(search.year) : undefined,
+    q: typeof search["q"] === "string" && search["q"] ? (search["q"] as string) : undefined,
+    course: typeof search["course"] === "string" && search["course"] ? (search["course"] as string) : undefined,
+    subject: typeof search["subject"] === "string" && search["subject"] ? (search["subject"] as string) : undefined,
+    semester: typeof search["semester"] === "string" && search["semester"] ? (search["semester"] as string) : undefined,
+    year: search["year"] ? Number(search["year"]) : undefined,
   }),
   loaderDeps: ({ search }) => search,
   loader: ({ context, deps }) =>
@@ -187,10 +187,10 @@ function FilterSelect({
   emptyHint,
 }: {
   label: string;
-  value?: string;
+  value?: string | undefined;
   options: string[];
   onChange: (value: string | undefined) => void;
-  emptyHint?: string;
+  emptyHint?: string | undefined;
 }) {
   return (
     <div className="space-y-2">

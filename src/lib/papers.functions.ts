@@ -19,12 +19,12 @@ export type PaperRow = {
 };
 
 type PaperFilters = {
-  course?: string;
-  subject?: string;
-  semester?: string;
-  examYear?: number;
-  q?: string;
-  limit?: number;
+  course?: string | undefined;
+  subject?: string | undefined;
+  semester?: string | undefined;
+  examYear?: number | undefined;
+  q?: string | undefined;
+  limit?: number | undefined;
 };
 
 function publicClient() {
