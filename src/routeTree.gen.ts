@@ -13,6 +13,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as BrowseRouteImport } from './routes/browse'
+import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedUploadRouteImport } from './routes/_authenticated/upload'
 import { Route as PaperIdRouteImport } from './routes/paper.$id'
 
@@ -35,6 +36,11 @@ const BrowseRoute = BrowseRouteImport.update({
   path: '/browse',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedDashboardRoute = AuthenticatedDashboardRouteImport.update({
+  id: '/dashboard',
+  path: '/dashboard',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedUploadRoute = AuthenticatedUploadRouteImport.update({
   id: '/upload',
   path: '/upload',
@@ -50,6 +56,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/upload': typeof AuthenticatedUploadRoute
   '/paper/$id': typeof PaperIdRoute
 }
@@ -57,6 +64,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/dashboard': typeof AuthenticatedDashboardRoute
   '/upload': typeof AuthenticatedUploadRoute
   '/paper/$id': typeof PaperIdRoute
 }
@@ -66,20 +74,22 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/browse': typeof BrowseRoute
+  '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/upload': typeof AuthenticatedUploadRoute
   '/paper/$id': typeof PaperIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/auth' | '/browse' | '/upload' | '/paper/$id'
+  fullPaths: '/' | '/auth' | '/browse' | '/dashboard' | '/upload' | '/paper/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/auth' | '/browse' | '/upload' | '/paper/$id'
+  to: '/' | '/auth' | '/browse' | '/dashboard' | '/upload' | '/paper/$id'
   id:
     | '__root__'
     | '/'
     | '/_authenticated'
     | '/auth'
     | '/browse'
+    | '/_authenticated/dashboard'
     | '/_authenticated/upload'
     | '/paper/$id'
   fileRoutesById: FileRoutesById
@@ -122,6 +132,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BrowseRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/dashboard': {
+      id: '/_authenticated/dashboard'
+      path: '/dashboard'
+      fullPath: '/dashboard'
+      preLoaderRoute: typeof AuthenticatedDashboardRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/upload': {
       id: '/_authenticated/upload'
       path: '/upload'
@@ -140,10 +157,12 @@ declare module '@tanstack/react-router' {
 }
 
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedUploadRoute: typeof AuthenticatedUploadRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedUploadRoute: AuthenticatedUploadRoute,
 }
 
