@@ -2,8 +2,16 @@ export const COLLEGE_NAME = "Bennett University";
 export const APP_NAME = "Bennett PYQ Hub";
 export const COLLEGE_EMAIL_DOMAIN = "bennett.edu.in";
 
+/** Moderator accounts allowed to sign in even without a college address. */
+export const ADMIN_EMAILS = ["manideep97018@gmail.com"];
+
 export function isCollegeEmail(email: string): boolean {
   return email.trim().toLowerCase().endsWith(`@${COLLEGE_EMAIL_DOMAIN}`);
+}
+
+export function isAllowedEmail(email: string): boolean {
+  const value = email.trim().toLowerCase();
+  return isCollegeEmail(value) || ADMIN_EMAILS.includes(value);
 }
 
 export const COURSES = [
