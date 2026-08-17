@@ -132,13 +132,17 @@ function Dashboard() {
                 {papers.map((paper) => (
                   <TableRow key={paper.id}>
                     <TableCell>
-                      <Link
-                        to="/paper/$id"
-                        params={{ id: paper.id }}
-                        className="font-medium hover:underline"
-                      >
-                        {paper.title}
-                      </Link>
+                      {paper.status === "published" ? (
+                        <Link
+                          to="/paper/$id"
+                          params={{ id: paper.id }}
+                          className="font-medium hover:underline"
+                        >
+                          {paper.title}
+                        </Link>
+                      ) : (
+                        <span className="font-medium">{paper.title}</span>
+                      )}
                       <div className="mt-1 flex flex-wrap gap-1">
                         <Badge variant="secondary">{paper.subject}</Badge>
                         <Badge variant="outline">{paper.semester}</Badge>
