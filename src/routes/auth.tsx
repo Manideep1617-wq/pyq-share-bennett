@@ -31,13 +31,15 @@ function AuthPage() {
   const { user } = useSession();
   const [sent, setSent] = useState(false);
   const [email, setEmail] = useState("");
+  const [code, setCode] = useState("");
   const [busy, setBusy] = useState(false);
+  const [verifying, setVerifying] = useState(false);
 
   useEffect(() => {
     if (user) navigate({ to: "/dashboard", replace: true });
   }, [user, navigate]);
 
-  async function sendLink() {
+  async function sendCode() {
     const value = email.trim().toLowerCase();
     if (!isAllowedEmail(value)) {
       toast.error(`Use your @${COLLEGE_EMAIL_DOMAIN} email address.`);
@@ -57,8 +59,26 @@ function AuthPage() {
       return;
     }
     setEmail(value);
+    setCode("");
     setSent(true);
-    toast.success("Link sent — check your inbox.");
+    toast.success("Code sent — check your email.");
+  }
+
+  async function verify() {
+    const token = code.replace(/\D/g, "");
+    if (token.length < 6) {
+      toast.error("Enter the 6-digit code from your email.");
+      return;
+    }
+    setVerifying(true);
+    const { error } = await supabase.auth.verifyOtp({ email, token, type: "email" });
+    setVerifying(false);
+    if (error) {
+      toast.error(error.message || "That code isn't valid or has expired.");
+      return;
+    }
+    toast.success(`Welcome to ${APP_NAME}!`);
+    navigate({ to: "/dashboard", replace: true });
   }
 
   return (
@@ -72,42 +92,67 @@ function AuthPage() {
               <GraduationCap className="size-6 text-secondary-foreground" />
             )}
           </div>
-          <CardTitle className="mt-3">{sent ? "Check your email" : "Sign in to PYQ Hub"}</CardTitle>
+          <CardTitle className="mt-3">{sent ? "Enter your code" : "Sign in to PYQ Hub"}</CardTitle>
           <CardDescription>
             {sent
-              ? `We sent a sign-in link to ${email}. Open it on this device to continue.`
-              : `${COLLEGE_NAME} students only — we'll email you a secure sign-in link.`}
+              ? `We emailed a 6-digit code to ${email}. Enter it below to sign in.`
+              : `${COLLEGE_NAME} students only — we'll email you a 6-digit sign-in code.`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {sent ? (
-            <div className="space-y-4">
+            <form
+              className="space-y-4"
+              onSubmit={(e) => {
+                e.preventDefault();
+                void verify();
+              }}
+            >
+              <div className="space-y-2">
+                <Label htmlFor="code">6-digit code</Label>
+                <Input
+                  id="code"
+                  inputMode="numeric"
+                  autoComplete="one-time-code"
+                  placeholder="123456"
+                  maxLength={6}
+                  className="text-center text-lg tracking-[0.4em]"
+                  value={code}
+                  onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full" disabled={verifying}>
+                {verifying ? <Loader2 className="size-4 animate-spin" /> : null} Verify & sign in
+              </Button>
               <div className="rounded-lg border bg-muted/40 p-4 text-sm text-muted-foreground">
-                <p className="font-medium text-foreground">Didn't see it?</p>
+                <p className="font-medium text-foreground">Didn't get it?</p>
                 <p className="mt-1">
-                  Check your Spam or Junk folder and mark the message as “Not spam” so future
-                  emails land in your inbox. The link expires in one hour.
+                  Check your Spam or Junk folder and mark the message as “Not spam”. The code
+                  expires in one hour. The email may also contain a sign-in link — either works.
                 </p>
               </div>
-              <Button variant="outline" className="w-full" disabled={busy} onClick={() => void sendLink()}>
-                {busy ? <Loader2 className="size-4 animate-spin" /> : null} Resend link
+              <Button variant="outline" className="w-full" disabled={busy} onClick={() => void sendCode()} type="button">
+                {busy ? <Loader2 className="size-4 animate-spin" /> : null} Resend code
               </Button>
               <Button
                 variant="ghost"
                 className="w-full"
+                type="button"
                 onClick={() => {
                   setSent(false);
+                  setCode("");
                 }}
               >
                 Use a different email
               </Button>
-            </div>
+            </form>
           ) : (
             <form
               className="space-y-4"
               onSubmit={(e) => {
                 e.preventDefault();
-                void sendLink();
+                void sendCode();
               }}
             >
               <div className="space-y-2">
@@ -123,7 +168,7 @@ function AuthPage() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={busy}>
-                {busy ? <Loader2 className="size-4 animate-spin" /> : null} Send sign-in link
+                {busy ? <Loader2 className="size-4 animate-spin" /> : null} Send sign-in code
               </Button>
             </form>
           )}
