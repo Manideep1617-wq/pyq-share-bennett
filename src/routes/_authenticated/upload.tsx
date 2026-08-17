@@ -122,8 +122,8 @@ function UploadPage() {
       return;
     }
 
-    toast.success("Paper published — thanks for sharing!");
-    navigate({ to: "/paper/$id", params: { id: data.id } });
+    toast.success("Sent for approval — an admin will review it shortly.");
+    navigate({ to: "/dashboard" });
   }
 
   return (
@@ -132,7 +132,8 @@ function UploadPage() {
         <CardHeader>
           <CardTitle>Upload a question paper</CardTitle>
           <CardDescription>
-            PDF, JPG or PNG up to 10 MB. Please make sure the paper is readable.
+            PDF, JPG or PNG up to 10 MB. Every upload is reviewed by an admin before it goes
+            public — you'll see it as "Pending" in My uploads until then.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -231,7 +232,7 @@ function UploadPage() {
             </div>
 
             <Button type="submit" className="w-full" disabled={busy}>
-              {busy ? <Loader2 className="size-4 animate-spin" /> : null} Publish paper
+              {busy ? <Loader2 className="size-4 animate-spin" /> : null} Submit for approval
             </Button>
           </form>
         </CardContent>

@@ -52,7 +52,7 @@ function Dashboard() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("papers")
-        .select("id, title, subject, course, semester, exam_year, download_count, file_path, upload_date")
+        .select("id, title, subject, course, semester, exam_year, download_count, file_path, upload_date, status")
         .eq("uploaded_by", user.id)
         .order("upload_date", { ascending: false });
       if (error) throw error;
@@ -123,6 +123,7 @@ function Dashboard() {
                   <TableHead>Paper</TableHead>
                   <TableHead className="hidden sm:table-cell">Course</TableHead>
                   <TableHead>Year</TableHead>
+                  <TableHead>Status</TableHead>
                   <TableHead>Downloads</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
@@ -147,6 +148,13 @@ function Dashboard() {
                       {paper.course}
                     </TableCell>
                     <TableCell className="text-muted-foreground">{paper.exam_year}</TableCell>
+                    <TableCell>
+                      {paper.status === "published" ? (
+                        <Badge>Published</Badge>
+                      ) : (
+                        <Badge variant="outline">Pending review</Badge>
+                      )}
+                    </TableCell>
                     <TableCell>
                       <span className="flex items-center gap-1 text-muted-foreground">
                         <Download className="size-3.5" /> {paper.download_count}
