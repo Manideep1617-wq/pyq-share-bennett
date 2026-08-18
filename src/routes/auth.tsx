@@ -50,7 +50,7 @@ function AuthPage() {
       email: value,
       options: {
         shouldCreateUser: true,
-        emailRedirectTo: `${window.location.origin}/dashboard`,
+        emailRedirectTo: `${window.location.origin}/auth`,
       },
     });
     setBusy(false);
@@ -61,7 +61,8 @@ function AuthPage() {
     setEmail(value);
     setCode("");
     setSent(true);
-    toast.success("Code sent — check your email.");
+    toast.success("Sign-in email sent — check your inbox (and Spam).");
+
   }
 
   async function verify() {
