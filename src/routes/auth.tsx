@@ -172,7 +172,7 @@ function AuthPage() {
                 />
               </div>
               <Button type="submit" className="w-full" disabled={busy}>
-                {busy ? <Loader2 className="size-4 animate-spin" /> : null} Send sign-in code
+                {busy ? <Loader2 className="size-4 animate-spin" /> : null} Send sign-in email
               </Button>
             </form>
           )}
