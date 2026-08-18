@@ -92,24 +92,37 @@ function AuthPage() {
               <GraduationCap className="size-6 text-secondary-foreground" />
             )}
           </div>
-          <CardTitle className="mt-3">{sent ? "Enter your code" : "Sign in to PYQ Hub"}</CardTitle>
+          <CardTitle className="mt-3">{sent ? "Check your email" : "Sign in to PYQ Hub"}</CardTitle>
           <CardDescription>
             {sent
-              ? `We emailed a 6-digit code to ${email}. Enter it below to sign in.`
-              : `${COLLEGE_NAME} students only — we'll email you a 6-digit sign-in code.`}
+              ? `We sent a sign-in email to ${email}. Open it and tap “Verify Email” — you'll land straight back here, signed in.`
+              : `${COLLEGE_NAME} students only — we'll email you a secure sign-in link.`}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {sent ? (
-            <form
-              className="space-y-4"
-              onSubmit={(e) => {
-                e.preventDefault();
-                void verify();
-              }}
-            >
-              <div className="space-y-2">
-                <Label htmlFor="code">6-digit code</Label>
+            <div className="space-y-4">
+              <div className="rounded-lg border bg-muted/40 p-4 text-sm text-muted-foreground">
+                <p className="font-medium text-foreground">Can't find the email?</p>
+                <ul className="mt-2 list-disc space-y-1 pl-4">
+                  <li>Check your Spam / Junk folder and mark it “Not spam”.</li>
+                  <li>On Gmail, also look under the “Promotions” or “Updates” tabs.</li>
+                  <li>The link works for one hour — after that, request a new one.</li>
+                </ul>
+              </div>
+
+              <Button variant="outline" className="w-full" disabled={busy} onClick={() => void sendCode()} type="button">
+                {busy ? <Loader2 className="size-4 animate-spin" /> : null} Resend email
+              </Button>
+
+              <form
+                className="space-y-2 rounded-lg border p-4"
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  void verify();
+                }}
+              >
+                <Label htmlFor="code">Got a 6-digit code instead? Enter it here</Label>
                 <Input
                   id="code"
                   inputMode="numeric"
@@ -119,22 +132,12 @@ function AuthPage() {
                   className="text-center text-lg tracking-[0.4em]"
                   value={code}
                   onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
-                  required
                 />
-              </div>
-              <Button type="submit" className="w-full" disabled={verifying}>
-                {verifying ? <Loader2 className="size-4 animate-spin" /> : null} Verify & sign in
-              </Button>
-              <div className="rounded-lg border bg-muted/40 p-4 text-sm text-muted-foreground">
-                <p className="font-medium text-foreground">Didn't get it?</p>
-                <p className="mt-1">
-                  Check your Spam or Junk folder and mark the message as “Not spam”. The code
-                  expires in one hour. The email may also contain a sign-in link — either works.
-                </p>
-              </div>
-              <Button variant="outline" className="w-full" disabled={busy} onClick={() => void sendCode()} type="button">
-                {busy ? <Loader2 className="size-4 animate-spin" /> : null} Resend code
-              </Button>
+                <Button type="submit" variant="secondary" className="w-full" disabled={verifying}>
+                  {verifying ? <Loader2 className="size-4 animate-spin" /> : null} Verify code
+                </Button>
+              </form>
+
               <Button
                 variant="ghost"
                 className="w-full"
@@ -146,8 +149,9 @@ function AuthPage() {
               >
                 Use a different email
               </Button>
-            </form>
+            </div>
           ) : (
+
             <form
               className="space-y-4"
               onSubmit={(e) => {
